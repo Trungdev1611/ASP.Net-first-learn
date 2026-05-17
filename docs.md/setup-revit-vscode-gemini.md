@@ -38,6 +38,7 @@ Mở VS Code, vào mục Extensions (`Ctrl + Shift + X`) và cài đặt các ex
 
 Tạo một thư mục trống cho dự án (ví dụ: `MyRevit2024Addin`). Cấu trúc các file cần có sẽ như sau:
 
+dotnet new classlib -o MyRevitPlugin (có thể chạy lệnh này)
 ```text
 MyRevit2024Addin/
 ├── .vscode/
