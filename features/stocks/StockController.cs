@@ -19,7 +19,7 @@ namespace _1.first_learn.features.stocks;
 
         [HttpGet]
         public async Task<ActionResult<List<Stock>>> GetAllStocks() {
-            var stocks = await _context.Stocks.ToListAsync();
+            var stocks = await _context.Stocks.AsNoTracking().ToListAsync(); //asNoTracking() giúp tăng hiệu suất khi chỉ đọc dữ liệu mà không cần theo dõi thay đổi
             return Ok(stocks);
         }
     }

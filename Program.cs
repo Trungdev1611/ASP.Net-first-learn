@@ -14,6 +14,10 @@ builder.Services.AddEndpointsApiExplorer();
 // Kích hoạt bộ sinh tài liệu Swagger
 builder.Services.AddSwaggerGen();
 
+//update controller
+builder.Services.AddControllers(); // Đăng ký các controller để .NET có thể tìm thấy và
+
+
 //set DB cho postgres
 // Trong file Program.cs của bạn:
 builder.Services.AddDbContext<ApplicationDBContext>(options => 
@@ -23,6 +27,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 var app = builder.Build();
 
+app.MapControllers();
 // =========================================================================
 // PHẦN 2: CONFIGURE MIDDLEWARE PIPELINE (Tương đương app.use() trong Express/NestJS)
 // =========================================================================
