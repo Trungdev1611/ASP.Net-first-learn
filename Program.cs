@@ -1,5 +1,7 @@
 using _1.first_learn.database;
 using _1.first_learn.dtos;
+using _1.first_learn.Extension;
+using _1.first_learn.features.stocks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection; // 1. Đảm bảo có dòng import này để dùng swagger
 var builder = WebApplication.CreateBuilder(args);
@@ -14,9 +16,13 @@ builder.Services.AddEndpointsApiExplorer();
 // Kích hoạt bộ sinh tài liệu Swagger
 builder.Services.AddSwaggerGen();
 
-//update controller
-builder.Services.AddControllers(); // Đăng ký các controller để .NET có thể tìm thấy và
 
+
+builder.Services
+.AddScoped<StockService>()
+.AddCustomValidationErrorHandling() // 400: [Required], [Range]... trên DTO
+.AddGlobalExceptionHandling()       // 404/400/500: exception từ Service
+.AddControllers();
 
 //set DB cho postgres
 // Trong file Program.cs của bạn:
@@ -27,20 +33,22 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 var app = builder.Build();
 
-app.MapControllers();
 // =========================================================================
 // PHẦN 2: CONFIGURE MIDDLEWARE PIPELINE (Tương đương app.use() trong Express/NestJS)
 // =========================================================================
 
-// Chỉ bật tài liệu API khi đang phát triển (Development) để tránh lộ API ở Production
+// Bắt exception toàn cục — đặt sớm, trước MapControllers
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();   // Tạo ra endpoint chứa file json đặc tả (mặc định: /swagger/v1/swagger.json)
-    app.UseSwaggerUI(); // Bật giao diện UI trực quan đồ họa (mặc định: /swagger)
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-// Tự động chuyển hướng các request HTTP thường sang HTTPS bảo mật
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 // =========================================================================
 // PHẦN 3: MAP ENDPOINTS (Tương đương app.get() hay app.post() trong NodeJS)
