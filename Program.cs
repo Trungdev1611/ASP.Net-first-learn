@@ -22,7 +22,7 @@ builder.Services
 .AddScoped<StockService>()
 .AddCustomValidationErrorHandling() // 400: [Required], [Range]... trên DTO
 .AddGlobalExceptionHandling()       // 404/400/500: exception từ Service
-.AddControllers();
+.AddControllersWithApiResponseWrapper(); // Ok(dto) → filter bọc { success, data }
 
 //set DB cho postgres
 // Trong file Program.cs của bạn:

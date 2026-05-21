@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _1.first_learn.models;
 
-namespace _1.first_learn.features.stocks;
-    public class StockDto
+namespace _1.first_learn.features.stocks.dtos;
+    public class StocksWithCommentsDTO
     {
-        public int Id {get; set;}
+         public int Id {get; set;}
 
         public string Symbol {get; set;} = string.Empty;
 
@@ -20,8 +21,5 @@ namespace _1.first_learn.features.stocks;
 
         public long Marketcap { get; set; }
 
-   
-
-
+        public List<CommentDTO> Comments {get; set;} = [];
     }
-

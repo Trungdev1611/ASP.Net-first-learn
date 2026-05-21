@@ -41,4 +41,17 @@ public static class DependencyInjection
         services.AddProblemDetails(); // pipeline chuẩn ASP.NET, hỗ trợ UseExceptionHandler (phải có dòn này mới chạy)
         return services;
     }
+
+    /// <summary>
+    /// Đăng ký Controller + filter bọc response thành công (Ok/Created) thành ApiResponse.
+    /// Thay cho .AddControllers() — không gọi AddControllers hai lần.
+    /// </summary>
+    public static IServiceCollection AddControllersWithApiResponseWrapper(this IServiceCollection services)
+    {
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<ApiResponseWrapperFilter>();
+        });
+        return services;
+    }
 }

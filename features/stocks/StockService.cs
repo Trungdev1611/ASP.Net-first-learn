@@ -76,4 +76,40 @@ public class StockService
 
         return stockModel.Adapt<StockDto>();
     }
+
+    public async Task<bool> DeleteAsyncService(int id)
+    {
+        var stockModel = await _context.Stocks.FirstOrDefaultAsync(s => s.Id == id);
+
+        if (stockModel is null)
+            throw new NotFoundException($"Không tìm thấy cổ phiếu id = {id}");
+
+        _context.Stocks.Remove(stockModel);
+        //Actually delete
+        await _context.SaveChangesAsync();
+        return true;
+
+
+    }
+
+    public async Task<List<StocksWithCommentsDTO>> GetAllStocksAndCommentsAsyncService()
+    {
+
+        // 1. Tạo một cấu hình riêng cho lệnh này
+        var config = new TypeAdapterConfig();
+
+        // 2. Dạy Mapster: Khi gặp Comment, hãy map chuẩn sang CommentDto (Chỉ lấy các trường trong CommentDto)
+        config.NewConfig<Comment, CommentDTO>();
+
+
+        var stocksWithComments = await _context.Stocks
+        .AsNoTracking()
+        .ProjectToType<StocksWithCommentsDTO>()
+        .ToListAsync();
+
+        return stocksWithComments;
+
+    }
+
+
 }

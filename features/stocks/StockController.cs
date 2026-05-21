@@ -1,4 +1,3 @@
-using _1.first_learn.Extension;
 using _1.first_learn.features.stocks.dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,35 +15,44 @@ public class StockController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<List<StockDto>>>> GetAllStocks()
+    public async Task<ActionResult<List<StockDto>>> GetAllStocks()
     {
-        var stockDtos = await _stockService.GetAllStocksAsync();
-        // Trước đây return Ok(stockDtos) → client nhận mảng thuần [...]
-        // Bọc ApiResponse → client nhận { success, message, data: [...] }
-        return Ok(ApiResponse<List<StockDto>>.Ok(stockDtos));
+        return Ok(await _stockService.GetAllStocksAsync());
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ApiResponse<StockDto>>> GetStockById([FromRoute] int id)
+    public async Task<ActionResult<StockDto>> GetStockById([FromRoute] int id)
     {
-        var stock = await _stockService.GetStockByIdAsync(id);
-        return Ok(ApiResponse<StockDto>.Ok(stock));
+        return Ok(await _stockService.GetStockByIdAsync(id));
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<ApiResponse<StockDto>>> CreateStock([FromBody] CreateStockDto createStockDto)
+    public async Task<ActionResult<StockDto>> CreateStock([FromBody] CreateStockDto createStockDto)
     {
-        var createdStockDto = await _stockService.CreateStockAsync(createStockDto);
-        var body = ApiResponse<StockDto>.Ok(createdStockDto, "Tạo cổ phiếu thành công");
-        return CreatedAtAction(nameof(GetStockById), new { id = createdStockDto.Id }, body);
+        var created = await _stockService.CreateStockAsync(createStockDto);
+        return CreatedAtAction(nameof(GetStockById), new { id = created.Id }, created);
     }
 
     [HttpPut("update/{id}")]
-    public async Task<ActionResult<ApiResponse<StockDto>>> UpdateStock(
+    public async Task<ActionResult<StockDto>> UpdateStock(
         [FromRoute] int id,
         [FromBody] UpdateRequestDto updateRequestDto)
     {
-        var updatedStockDto = await _stockService.UpdateStockAsync(id, updateRequestDto);
-        return Ok(ApiResponse<StockDto>.Ok(updatedStockDto, "Cập nhật thành công"));
+        return Ok(await _stockService.UpdateStockAsync(id, updateRequestDto));
     }
+
+    [HttpDelete("delete/{id}")]
+    public async Task<ActionResult<bool>> DeleteStockAsync([FromRoute] int id)
+    {
+        return Ok(await _stockService.DeleteAsyncService(id));
+    }
+
+    // GET api/stocks/comments (không dùng "/comments" — dấu / đầu = route tuyệt đối /comments)
+    [HttpGet("comments")]
+    public async Task<ActionResult<List<StocksWithCommentsDTO>>> GetAllStocksAndCommentsAsync()
+    {
+        return Ok(await _stockService.GetAllStocksAndCommentsAsyncService());
+    }
+
+
 }
